@@ -1,11 +1,14 @@
 {% extends 'tasks/base.html' %}
+{% load custom_filters %}
 
 {% block content %}
 <div class="row">
-    <div class="col-md-12 mb-4">
+    <div class="col-md-12 mb-4 fade-in">
         <div class="card">
-            <div class="card-header">
-                <h5 class="card-title mb-0">Add New Task</h5>
+            <div class="card-header bg-primary text-white" style="border-radius: 15px 15px 0 0;">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-plus-circle me-2"></i>Add New Task
+                </h5>
             </div>
             <div class="card-body">
                 <form method="POST">
@@ -16,33 +19,51 @@
                     <div class="mb-3">
                         {{ form.description }}
                     </div>
-                    <button type="submit" class="btn btn-primary">Add Task</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-plus me-2"></i>Add Task
+                    </button>
                 </form>
             </div>
         </div>
     </div>
 
-    <div class="col-md-12">
-        <h2>My Tasks</h2>
+    <div class="col-md-12 fade-in">
+        <h2 class="mb-4 text-primary">
+            <i class="fas fa-tasks me-2"></i>My Tasks
+        </h2>
         {% if tasks %}
             <div class="list-group">
                 {% for task in tasks %}
-                    <div class="list-group-item {% if task.completed %}completed-task{% endif %}">
+                    <div class="list-group-item {% if task.completed %}completed-task{% endif %} animate-task-{{ forloop.counter }}">
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
-                                <h5 class="mb-1 task-title">{{ task.title }}</h5>
+                                <h5 class="mb-1 task-title">
+                                    {% if task.completed %}
+                                        <i class="fas fa-check-circle text-success me-2"></i>
+                                    {% endif %}
+                                    {{ task.title }}
+                                </h5>
                                 <p class="mb-1">{{ task.description }}</p>
-                                <small class="text-muted">Created: {{ task.created_at|date:"F j, Y, g:i a" }}</small>
+                                <small class="text-muted">
+                                    <i class="far fa-clock me-1"></i>
+                                    Created: {{ task.created_at|date:"M j, Y, g:i A" }}
+                                </small>
                             </div>
-                            <div class="btn-group">
-                                <a href="{% url 'toggle_task' task.pk %}" class="btn btn-sm {% if task.completed %}btn-success{% else %}btn-outline-success{% endif %}">
+                            <div class="btn-group task-actions">
+                                <a href="{% url 'toggle_task' task.pk %}" 
+                                   class="btn btn-sm {% if task.completed %}btn-success{% else %}btn-outline-success{% endif %}"
+                                   title="{% if task.completed %}Mark as incomplete{% else %}Mark as complete{% endif %}">
                                     <i class="fas {% if task.completed %}fa-check-circle{% else %}fa-circle{% endif %}"></i>
                                 </a>
-                                <a href="{% url 'edit_task' task.pk %}" class="btn btn-sm btn-outline-primary">
+                                <a href="{% url 'edit_task' task.pk %}" 
+                                   class="btn btn-sm btn-outline-primary"
+                                   title="Edit task">
                                     <i class="fas fa-edit"></i>
                                 </a>
-                                <a href="{% url 'delete_task' task.pk %}" class="btn btn-sm btn-outline-danger" 
-                                   onclick="return confirm('Are you sure you want to delete this task?')">
+                                <a href="{% url 'delete_task' task.pk %}" 
+                                   class="btn btn-sm btn-outline-danger"
+                                   onclick="return confirm('Are you sure you want to delete this task?')"
+                                   title="Delete task">
                                     <i class="fas fa-trash"></i>
                                 </a>
                             </div>
@@ -51,10 +72,48 @@
                 {% endfor %}
             </div>
         {% else %}
-            <div class="alert alert-info">
+            <div class="alert alert-info fade-in">
+                <i class="fas fa-info-circle me-2"></i>
                 No tasks yet. Add your first task above!
             </div>
         {% endif %}
     </div>
 </div>
+
+<style>
+    .animate-task-1 { animation-delay: 0.1s; }
+    .animate-task-2 { animation-delay: 0.2s; }
+    .animate-task-3 { animation-delay: 0.3s; }
+    .animate-task-4 { animation-delay: 0.4s; }
+    .animate-task-5 { animation-delay: 0.5s; }
+    .animate-task-6 { animation-delay: 0.6s; }
+    .animate-task-7 { animation-delay: 0.7s; }
+    .animate-task-8 { animation-delay: 0.8s; }
+    .animate-task-9 { animation-delay: 0.9s; }
+
+    [class*="animate-task-"] {
+        opacity: 0;
+        animation: fadeInTask 0.5s ease-out forwards;
+    }
+
+    @keyframes fadeInTask {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .task-actions {
+        opacity: 0.7;
+        transition: opacity 0.3s ease;
+    }
+
+    .list-group-item:hover .task-actions {
+        opacity: 1;
+    }
+</style>
 {% endblock %}

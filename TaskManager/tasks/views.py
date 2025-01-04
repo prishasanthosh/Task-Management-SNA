@@ -19,7 +19,7 @@ def register(request):
 
 @login_required
 def index(request):
-    tasks = Task.objects.filter(user=request.user).order_by('-created_at')
+    tasks = Task.objects.filter(user=request.user).order_by('-created_date')  # Task filtering and ordering
     form = TaskForm()
     
     if request.method == 'POST':
